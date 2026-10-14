@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Join me on The Cook Club</title>
+<meta name="description" content="A friend invited you to The Cook Club — log what you cook, rate it and share recipes.">
+<meta name="color-scheme" content="light dark">
+<meta property="og:title" content="Join me on The Cook Club">
+<meta property="og:description" content="A friend invited you to The Cook Club — log what you cook, rate it and share recipes.">
+<link rel="icon" href="logo.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="logo.png">
+<link rel="stylesheet" href="site.css">
+</head>
+<body>
+<header class="site"><div class="wrap"><a class="brand" href="./"><img src="logo.png" alt="">The Cook Club</a></div></header>
+<main><div class="wrap">
+<section class="hero">
+<img src="logo.png" alt="">
+<h1 id="inv-title">Join me on The Cook Club</h1>
+<div class="tag">Your kitchen, your story.</div>
+<p>Log what you cook, rate your attempts, collect recipes and follow other home cooks.</p>
+<p id="inv-hint" class="small" style="display:none;"></p>
+<span class="badge">Coming soon to the App Store</span>
+</section>
+<script>
+(function(){
+  var u = new URLSearchParams(location.search).get('u') || '';
+  u = u.toLowerCase().replace(/[^a-z0-9_.]/g, '').slice(0, 30);
+  if(!u) return;
+  document.getElementById('inv-title').textContent = '@' + u + ' invited you to The Cook Club';
+  var h = document.getElementById('inv-hint');
+  h.textContent = 'Once you join, search for @' + u + ' to follow them.';
+  h.style.display = 'block';
+  document.title = '@' + u + ' invited you to The Cook Club';
+})();
+</script>
+</div></main>
+<footer class="site"><div class="wrap">
+<nav><a href="./">Home</a><a href="support.html">Support</a><a href="terms.html">Terms of Use</a><a href="privacy.html">Privacy Policy</a><a href="guidelines.html">Community Guidelines</a></nav>
+© 2026 The Cook Club
+</div></footer>
+</body>
+</html>

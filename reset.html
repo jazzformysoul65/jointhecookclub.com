@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Choose a new password — The Cook Club</title>
+<meta name="description" content="Reset your Cook Club password.">
+<meta name="robots" content="noindex">
+<meta name="color-scheme" content="light dark">
+<meta property="og:title" content="Choose a new password — The Cook Club">
+<meta property="og:description" content="Reset your Cook Club password.">
+<link rel="icon" href="logo.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="logo.png">
+<link rel="stylesheet" href="site.css">
+<meta name="referrer" content="no-referrer">
+</head>
+<body>
+<header class="site"><div class="wrap"><a class="brand" href="./"><img src="logo.png" alt="">The Cook Club</a></div></header>
+<main><div class="wrap">
+<h1>Choose a new password</h1>
+<p class="updated" id="r-sub">Checking your reset link…</p>
+<div id="r-msg" class="msg"></div>
+<form id="r-form" style="display:none;" autocomplete="on">
+<input type="text" name="username" autocomplete="username" style="display:none;" aria-hidden="true">
+<label for="r-pw">New password</label>
+<input id="r-pw" type="password" autocomplete="new-password" placeholder="8+ characters" required>
+<label for="r-pw2">Type it again</label>
+<input id="r-pw2" type="password" autocomplete="new-password" placeholder="Same password" required>
+<div style="height:18px;"></div>
+<button class="btn block" id="r-btn" type="submit">Save new password</button>
+</form>
+<script src="supabase.js"></script>
+<script>
+(function(){
+  var URL_ = 'https://dfyokhxekfviakiuupzh.supabase.co', KEY = 'sb_publishable_UcUi1vDJXZ8gf_-3eKZNDQ_B01wkITE';
+  var sub = document.getElementById('r-sub'), msg = document.getElementById('r-msg'), form = document.getElementById('r-form'), btn = document.getElementById('r-btn');
+  function show(kind, text){ msg.className = 'msg show ' + kind; msg.textContent = text; }
+  var hp = new URLSearchParams(location.hash.slice(1)), qp = new URLSearchParams(location.search);
+  var linkErr = hp.get('error_description') || qp.get('error_description');
+  function bad(){ sub.textContent = ''; form.style.display = 'none';
+    show('err', 'This reset link has expired or was already used. In The Cook Club, tap "Forgot password?" again to get a new link.'); }
+  if(linkErr || !window.supabase){ if(location.hash) history.replaceState(null, '', location.pathname); return bad(); }
+  var sb = window.supabase.createClient(URL_, KEY, { auth:{ persistSession:false, autoRefreshToken:false, detectSessionInUrl:true } });
+  var ready = false;
+  function ok(){ if(ready) return; ready = true; sub.textContent = 'Pick a new password for your account.'; form.style.display = 'block'; document.getElementById('r-pw').focus(); }
+  sb.auth.onAuthStateChange(function(ev, session){ if(session && (ev === 'PASSWORD_RECOVERY' || ev === 'SIGNED_IN' || ev === 'INITIAL_SESSION')) ok(); });
+  sb.auth.getSession().then(function(r){
+    if(location.hash) history.replaceState(null, '', location.pathname);
+    if(r.data && r.data.session) ok(); else setTimeout(function(){ if(!ready) bad(); }, 400);
+  });
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var a = document.getElementById('r-pw').value, b = document.getElementById('r-pw2').value;
+    if(a.length < 8) return show('err', 'Use at least 8 characters.');
+    if(a !== b) return show('err', "The two passwords don't match.");
+    btn.disabled = true; btn.textContent = 'Saving…'; msg.className = 'msg';
+    sb.auth.updateUser({ password: a }).then(function(r){
+      if(r.error){
+        var m = String(r.error.message || '');
+        show('err', /different from the old/i.test(m) ? 'Your new password must be different from your old one.'
+          : /weak|pwned|leaked|known/i.test(m) ? 'That password is too easy to guess or appeared in a data leak. Please choose another.'
+          : /session|jwt|expired/i.test(m) ? 'This reset link has expired. Request a new one from the app.'
+          : "Couldn't save your new password. Please try again.");
+        btn.disabled = false; btn.textContent = 'Save new password'; return;
+      }
+      sb.auth.signOut({ scope:'local' });
+      form.style.display = 'none'; sub.textContent = '';
+      show('ok', 'Your password is updated. Go back to The Cook Club and log in with your new password.');
+    });
+  });
+})();
+</script>
+</div></main>
+<footer class="site"><div class="wrap">
+<nav><a href="./">Home</a><a href="support.html">Support</a><a href="terms.html">Terms of Use</a><a href="privacy.html">Privacy Policy</a><a href="guidelines.html">Community Guidelines</a></nav>
+© 2026 The Cook Club
+</div></footer>
+</body>
+</html>

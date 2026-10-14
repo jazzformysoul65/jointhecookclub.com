@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Email confirmed — The Cook Club</title>
+<meta name="description" content="Confirm your email for The Cook Club.">
+<meta name="robots" content="noindex">
+<meta name="color-scheme" content="light dark">
+<meta property="og:title" content="Email confirmed — The Cook Club">
+<meta property="og:description" content="Confirm your email for The Cook Club.">
+<link rel="icon" href="logo.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="logo.png">
+<link rel="stylesheet" href="site.css">
+</head>
+<body>
+<header class="site"><div class="wrap"><a class="brand" href="./"><img src="logo.png" alt="">The Cook Club</a></div></header>
+<main><div class="wrap">
+<section class="hero">
+<img src="logo.png" alt="">
+<h1 id="c-title">Your email is confirmed</h1>
+<p id="c-text">You're all set. Go back to The Cook Club and log in with your email or username.</p>
+</section>
+<script>
+(function(){
+  var h = new URLSearchParams(location.hash.slice(1)), q = new URLSearchParams(location.search);
+  var err = h.get('error_description') || q.get('error_description');
+  if(location.hash || location.search) history.replaceState(null, '', location.pathname);
+  if(err){
+    document.getElementById('c-title').textContent = 'This link didn\'t work';
+    document.getElementById('c-text').textContent = 'It may have expired or already been used. Try logging in to The Cook Club — if your email still isn\'t confirmed, sign up again to get a new link.';
+  }
+})();
+</script>
+</div></main>
+<footer class="site"><div class="wrap">
+<nav><a href="./">Home</a><a href="support.html">Support</a><a href="terms.html">Terms of Use</a><a href="privacy.html">Privacy Policy</a><a href="guidelines.html">Community Guidelines</a></nav>
+© 2026 The Cook Club
+</div></footer>
+</body>
+</html>
