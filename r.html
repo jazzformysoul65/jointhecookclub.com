@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A recipe for you on The Cook Club</title>
+<meta name="description" content="A friend shared a recipe with you on The Cook Club.">
+<meta name="color-scheme" content="light dark">
+<meta property="og:title" content="A recipe for you on The Cook Club">
+<meta property="og:description" content="A friend shared a recipe with you on The Cook Club.">
+<link rel="icon" href="logo.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="logo.png">
+<link rel="stylesheet" href="site.css">
+<meta property="og:image" content="https://jointhecookclub.com/email/welcome-cooking.png">
+</head>
+<body>
+<header class="site"><div class="wrap"><a class="brand" href="./"><img src="logo.png" alt="">The Cook Club</a></div></header>
+<main><div class="wrap">
+<section class="hero">
+<img src="logo.png" alt="">
+<h1 id="r-title">A friend shared a recipe with you</h1>
+<div class="tag">Your kitchen, your story.</div>
+<p>Open it in The Cook Club app to see the photos, ingredients and steps, and save it to try.</p>
+<span class="badge">Coming soon to the App Store</span>
+<p id="r-hint" class="small">After you get the app, tap the link again and the recipe opens.</p>
+<p id="r-open" style="display:none;"><a href="#">Already have the app? Open the recipe</a></p>
+</section>
+<script>
+(function(){
+  var q = new URLSearchParams(location.search), id = parseInt(q.get('id'), 10);
+  var u = (q.get('u') || '').toLowerCase().replace(/[^a-z0-9_.]/g, '').slice(0, 30);
+  if(u){ document.getElementById('r-title').textContent = '@' + u + ' shared a recipe with you'; document.title = '@' + u + ' shared a recipe with you on The Cook Club'; }
+  if(id > 0){ var o = document.getElementById('r-open'); o.querySelector('a').href = 'thecookclub://recipe/' + id + (u ? '?u=' + encodeURIComponent(u) : ''); o.style.display = 'block'; }
+})();
+</script>
+</div></main>
+<footer class="site"><div class="wrap">
+<nav><a href="./">Home</a><a href="support.html">Support</a><a href="terms.html">Terms of Use</a><a href="privacy.html">Privacy Policy</a><a href="guidelines.html">Community Guidelines</a></nav>
+© 2026 The Cook Club
+</div></footer>
+</body>
+</html>
