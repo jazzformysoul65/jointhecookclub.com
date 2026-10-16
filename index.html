@@ -9,6 +9,16 @@
 <meta property="og:image" content="https://jointhecookclub.com/email/welcome-cooking.png">
 <link rel="icon" href="logo.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="logo.png">
+<script>
+// Links from the app's emails sometimes land here (the site's main address). Send them to the right page.
+(function(){
+  var h = location.hash; if(!h || h.length < 2) return;
+  var p = new URLSearchParams(h.slice(1)), t = p.get('type');
+  if(t === 'recovery'){ location.replace('reset.html' + h); return; }
+  if(t === 'signup' || t === 'email_change' || t === 'email' || t === 'invite'){ location.replace('confirmed.html' + h); return; }
+  if(p.get('error')){ window.__linkError = true; history.replaceState(null, '', location.pathname); }
+})();
+</script>
 <style>
 :root{ --bg:#FAF7F0; --card:#fff; --text:#1F3D2B; --muted:rgba(31,61,43,.64); --line:rgba(31,61,43,.12); --soft:#EFE9DA; --wall:#F5ECDD; }
 @media (prefers-color-scheme: dark){ :root{ --bg:#121212; --card:#1E1E1E; --text:#E3E3E3; --muted:rgba(255,255,255,.62); --line:rgba(255,255,255,.10); --soft:#262626; } }
@@ -42,18 +52,24 @@ header .brand svg{ width:30px; height:30px; }
 /* features with the phone that stays */
 .features{ position:relative; max-width:1120px; margin:0 auto; padding:0 24px; display:grid; grid-template-columns:1fr 1fr; gap:40px; }
 .phone-col{ position:relative; }
-.phone{ position:sticky; top:calc(50vh - 300px); margin:0 auto; width:290px; height:600px; border-radius:46px; background:#111; padding:12px; box-shadow:0 30px 70px rgba(0,0,0,.28), inset 0 0 0 2px #2a2a2a; }
-.phone .screen{ position:relative; width:100%; height:100%; border-radius:36px; overflow:hidden; background:#fff; }
-.phone img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:top; opacity:0; transform:scale(1.04); transition:opacity .6s ease, transform .8s ease; }
-.phone img.on{ opacity:1; transform:none; }
-.phone .notch{ position:absolute; top:10px; left:50%; transform:translateX(-50%); width:96px; height:26px; background:#111; border-radius:20px; z-index:2; }
+.phone{ position:sticky; top:max(80px, calc(50vh - 280px)); margin:0 auto; width:clamp(220px, calc((100vh - 120px) / 2.17), 300px); border-radius:46px; background:#111; padding:12px; box-shadow:0 30px 70px rgba(0,0,0,.28), inset 0 0 0 2px #2a2a2a; }
+/* one picture of Home that scrolls inside the phone while you scroll the page */
+.phone .screen{ position:relative; width:100%; aspect-ratio:393/852; border-radius:36px; overflow:hidden; background:#FAF7F0; }
+.phone .view{ position:absolute; left:0; right:0; overflow:hidden; }
+.phone .long{ display:block; width:100%; height:auto; will-change:transform; }
+.phone .bar{ position:absolute; left:0; width:100%; height:auto; display:block; }
+.phone .bar.top{ top:0; } .phone .bar.tab{ bottom:0; }
+.phone .notch{ position:absolute; top:22px; left:50%; transform:translateX(-50%); width:31%; aspect-ratio:96/28; background:#000; border-radius:20px; z-index:2; }
+.phone .glow{ position:absolute; left:89.9%; top:93%; width:13%; aspect-ratio:1; transform:translate(-50%,-50%) scale(.6); border-radius:50%; box-shadow:0 0 0 3px #E8B04B, 0 0 18px 4px rgba(232,176,75,.65); opacity:0; transition:opacity .4s, transform .4s; pointer-events:none; }
+.phone.mc-on .glow{ opacity:1; transform:translate(-50%,-50%) scale(1); animation:glow 1.8s ease-in-out infinite; }
+@keyframes glow{ 50%{ box-shadow:0 0 0 3px #E8B04B, 0 0 26px 8px rgba(232,176,75,.4); } }
 .step{ min-height:100vh; display:flex; flex-direction:column; justify-content:center; padding:40px 0; }
 .step .num{ font-weight:800; font-size:13px; letter-spacing:.12em; color:var(--muted); margin-bottom:10px; }
 .step h2{ font-family:Georgia,serif; font-size:clamp(30px,4vw,46px); line-height:1.1; margin:0 0 14px; }
 .step p{ color:var(--muted); font-size:19px; max-width:440px; margin:0; }
 .step{ opacity:.25; transform:translateY(24px); transition:opacity .6s, transform .6s; }
 .step.in{ opacity:1; transform:none; }
-.mc{ display:inline-block; margin-top:16px; font-size:13px; font-weight:800; letter-spacing:.06em; background:#E8B04B; color:#1F3D2B; padding:5px 11px; border-radius:8px; }
+.mc{ display:inline-block; align-self:flex-start; margin-top:16px; font-size:13px; font-weight:800; letter-spacing:.06em; background:#E8B04B; color:#1F3D2B; padding:5px 11px; border-radius:8px; }
 /* end */
 .end{ text-align:center; padding:120px 24px 90px; }
 .end h2{ font-family:Georgia,serif; font-size:clamp(32px,5vw,56px); margin:0 0 12px; line-height:1.1; }
@@ -68,14 +84,20 @@ footer a{ color:var(--muted); }
   .phone-col{ display:none; }
   .step{ min-height:auto; padding:56px 0 30px; text-align:center; align-items:center; }
   .step p{ font-size:17px; }
-  .mini{ display:block; width:210px; height:434px; margin:0 auto 26px; border-radius:34px; background:#111; padding:9px; box-shadow:0 22px 50px rgba(0,0,0,.25); }
-  .mini img{ width:100%; height:100%; object-fit:cover; object-position:top; border-radius:26px; display:block; }
+  .mc{ align-self:center; }
+  .mini{ display:block; position:relative; top:auto; width:210px; margin:0 auto 26px; border-radius:34px; padding:9px; box-shadow:0 22px 50px rgba(0,0,0,.25); }
+  .mini .screen{ border-radius:26px; }
+  .mini .notch{ top:16px; }
 }
-@media (prefers-reduced-motion: reduce){ .st,#lights circle{ animation:none } .step{ opacity:1; transform:none } }
+@media (prefers-reduced-motion: reduce){ .st,#lights circle,.phone.mc-on .glow{ animation:none } .step{ opacity:1; transform:none } }
 </style></head>
 <body>
-<header id="hdr"><a class="brand" href="./"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 453 384"><path fill="currentColor" d="M345.7,164.7 A154.5,154.5 0 1 1 290.7,71.4 C303,80 312,84 322,85 L322,91.5 C311,91 300,88 271.0,71.4 A134.0,134.0 0 1 0 332.8,166.9 A6.5,6.5 0 0 1 345.7,164.7 Z"/><path fill="currentColor" fill-rule="evenodd" d="M320,90 C322,79 338,72 356,73 C384,75 404,92 411,118 C414,131 415,146 418,161 C402,157 383,156 365,151 C342,144 324,128 320,90 Z M324,91.5 C344,96 364,103 384,114 C364,106 344,99.5 323.5,96.5 Z"/><path fill="currentColor" d="M164.5,151 a6.5,6.5 0 0 1 13,0 V238 h-13 Z M192.5,151 a6.5,6.5 0 0 1 13,0 V238 h-13 Z M220.5,151 a6.5,6.5 0 0 1 13,0 V238 h-13 Z M164,232 H234 Q236,232 236,234 V249 C236,263 224,274 209.5,282 V330 H188.5 V282 C174,274 162,263 162,249 V234 Q162,232 164,232 Z"/></svg>The Cook Club</a><span class="pill">Coming soon</span></header>
+<header id="hdr"><a class="brand" href="./"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 453 384"><path fill="currentColor" d="M345.7,164.7 A154.5,154.5 0 1 1 290.7,71.4 C303,80 312,84 322,85 L322,91.5 C311,91 300,88 271.0,71.4 A134.0,134.0 0 1 0 332.8,166.9 A6.5,6.5 0 0 1 345.7,164.7 Z"/><path fill="#E8B04B" fill-rule="evenodd" d="M320,90 C322,79 338,72 356,73 C384,75 404,92 411,118 C414,131 415,146 418,161 C402,157 383,156 365,151 C342,144 324,128 320,90 Z M324,91.5 C344,96 364,103 384,114 C364,106 344,99.5 323.5,96.5 Z"/><path fill="currentColor" d="M164.5,151 a6.5,6.5 0 0 1 13,0 V238 h-13 Z M192.5,151 a6.5,6.5 0 0 1 13,0 V238 h-13 Z M220.5,151 a6.5,6.5 0 0 1 13,0 V238 h-13 Z M164,232 H234 Q236,232 236,234 V249 C236,263 224,274 209.5,282 V330 H188.5 V282 C174,274 162,263 162,249 V234 Q162,232 164,232 Z"/></svg>The Cook Club</a><span class="pill">Coming soon</span></header>
 
+<div id="linkerr" style="display:none;position:fixed;z-index:60;top:72px;left:50%;transform:translateX(-50%);width:min(560px,calc(100% - 32px));background:#FFF4E5;color:#7A4A12;border:1px solid #F0C98A;border-radius:14px;padding:12px 16px;font-size:15px;line-height:1.45;box-shadow:0 10px 30px rgba(0,0,0,.15);">
+  <b>That link has expired or was already used.</b> Open The Cook Club and ask for a new one (for a password: tap “Forgot password?” again). Only the newest email’s link works.
+  <span onclick="this.parentNode.style.display='none'" style="float:right;cursor:pointer;font-weight:800;margin-left:10px;">✕</span>
+</div>
 <section class="hero" id="hero">
   <div class="stick">
     <div class="title" id="title">
@@ -234,14 +256,14 @@ footer a{ color:var(--muted); }
 
 <section class="features" id="features">
   <div class="steps">
-    <div class="step" data-shot="0"><div class="num">01</div><h2>Log what you cook</h2><p>Keep a diary of every dish: photos, notes and a star rating. See your streaks and favorite cuisines grow.</p></div>
-    <div class="step" data-shot="1"><div class="num">02</div><h2>Ratings are the likes</h2><p>Rate the recipes you try. The best-rated dishes rise to Trending on Home, for everyone to discover.</p></div>
-    <div class="step" data-shot="2"><div class="num">03</div><h2>Every recipe, beautifully</h2><p>Your recipes with photos, a video, macros and your own history of tries. Add one by typing, pasting a link or scanning a photo.</p></div>
-    <div class="step" data-shot="3"><div class="num">04</div><h2>Collect what you love</h2><p>Your signature dish, recently cooked, and collections for every mood — weeknights, Sundays, date night.</p></div>
-    <div class="step" data-shot="4"><div class="num">05</div><h2>Cook with friends</h2><p>Follow cooks you love, see what they make, save their recipes to try and cheer them on.</p></div>
-    <div class="step" data-shot="5"><div class="num">06</div><h2>Become a Master Cook</h2><p>Recipe videos, “What can I make?”, hands-free Cook Mode, scaling, macros and more.</p><span class="mc">OPTIONAL MEMBERSHIP</span></div>
+    <div class="step" data-shot="0"><div class="phone mini"><div class="screen"><div class="view"><img class="long" src="img/phone-home.jpg" alt=""></div><img class="bar top" src="img/phone-top.png" alt=""><img class="bar tab" src="img/phone-tab.png" alt=""><span class="glow"></span></div><div class="notch"></div></div><div class="num">01</div><h2>Log what you cook</h2><p>Keep a diary of every dish: photos, notes and a star rating. See your streaks and favorite cuisines grow.</p></div>
+    <div class="step" data-shot="1"><div class="phone mini"><div class="screen"><div class="view"><img class="long" src="img/phone-home.jpg" alt=""></div><img class="bar top" src="img/phone-top.png" alt=""><img class="bar tab" src="img/phone-tab.png" alt=""><span class="glow"></span></div><div class="notch"></div></div><div class="num">02</div><h2>Ratings are the likes</h2><p>Rate the recipes you try. The best-rated dishes rise to Trending on Home, for everyone to discover.</p></div>
+    <div class="step" data-shot="2"><div class="phone mini"><div class="screen"><div class="view"><img class="long" src="img/phone-home.jpg" alt=""></div><img class="bar top" src="img/phone-top.png" alt=""><img class="bar tab" src="img/phone-tab.png" alt=""><span class="glow"></span></div><div class="notch"></div></div><div class="num">03</div><h2>Every recipe, beautifully</h2><p>Your recipes with photos, a video, macros and your own history of tries. Add one by typing, pasting a link or scanning a photo.</p></div>
+    <div class="step" data-shot="3"><div class="phone mini"><div class="screen"><div class="view"><img class="long" src="img/phone-home.jpg" alt=""></div><img class="bar top" src="img/phone-top.png" alt=""><img class="bar tab" src="img/phone-tab.png" alt=""><span class="glow"></span></div><div class="notch"></div></div><div class="num">04</div><h2>Collect what you love</h2><p>Your signature dish, recently cooked, and collections for every mood — weeknights, Sundays, date night.</p></div>
+    <div class="step" data-shot="4"><div class="phone mini"><div class="screen"><div class="view"><img class="long" src="img/phone-home.jpg" alt=""></div><img class="bar top" src="img/phone-top.png" alt=""><img class="bar tab" src="img/phone-tab.png" alt=""><span class="glow"></span></div><div class="notch"></div></div><div class="num">05</div><h2>Cook with friends</h2><p>Follow cooks you love, see what they make, save their recipes to try and cheer them on.</p></div>
+    <div class="step" data-shot="5"><div class="phone mini"><div class="screen"><div class="view"><img class="long" src="img/phone-home.jpg" alt=""></div><img class="bar top" src="img/phone-top.png" alt=""><img class="bar tab" src="img/phone-tab.png" alt=""><span class="glow"></span></div><div class="notch"></div></div><div class="num">06</div><h2>Become a Master Cook</h2><p>Recipe videos, “What can I make?”, hands-free Cook Mode, scaling, macros and more.</p><span class="mc">OPTIONAL MEMBERSHIP</span></div>
   </div>
-  <div class="phone-col"><div class="phone"><div class="notch"></div><div class="screen"><img src="img/app-log.jpg" alt="" class="on"><img src="img/app-home.jpg" alt=""><img src="img/app-recipe.jpg" alt=""><img src="img/app-recipes.jpg" alt=""><img src="img/app-profile.jpg" alt=""><img src="img/app-premium.jpg" alt=""></div></div></div>
+  <div class="phone-col"><div class="phone"><div class="screen"><div class="view"><img class="long" src="img/phone-home.jpg" alt="The Cook Club app’s Home screen"></div><img class="bar top" src="img/phone-top.png" alt=""><img class="bar tab" src="img/phone-tab.png" alt=""><span class="glow"></span></div><div class="notch"></div></div></div>
 </section>
 
 <section class="end">
@@ -253,6 +275,7 @@ footer a{ color:var(--muted); }
 
 <script>
 (function(){
+  if(window.__linkError){ var le = document.getElementById('linkerr'); if(le) le.style.display = 'block'; }
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var hero = document.getElementById('hero'), scene = document.getElementById('scene'), title = document.getElementById('title'), hint = document.getElementById('hint'), hdr = document.getElementById('hdr');
   var L = { bg: scene.querySelector('#bg'), people: scene.querySelector('#people'), fg: scene.querySelector('#fg'), steam: scene.querySelector('#steam') };
@@ -274,12 +297,38 @@ footer a{ color:var(--muted); }
   }
   window.addEventListener('scroll', function(){ if(!ticking){ ticking = true; requestAnimationFrame(frame); } }, { passive:true });
   window.addEventListener('resize', frame); frame();
-  // the phone shows the screen for the step you're reading
-  var shots = document.querySelectorAll('.phone img'), steps = document.querySelectorAll('.step');
-  var io = new IntersectionObserver(function(es){ es.forEach(function(e){
-    if(e.isIntersecting){ e.target.classList.add('in'); var i = +e.target.dataset.shot; shots.forEach(function(s, k){ s.classList.toggle('on', k === i); }); }
-    else e.target.classList.remove('in');
-  }); }, { rootMargin:'-45% 0px -45% 0px' });
+  // the phone scrolls through Home as you read: each step stops the phone at its part of Home
+  var P = {"width":393,"topH":102,"tabH":81,"viewH":669,"longH":2360,"anchors":{"log":0,"search":114,"week":261,"trending":520,"friends":762,"popular":832,"quick":1560,"cuisine":1801,"because":2112}}, steps = [].slice.call(document.querySelectorAll('.step'));
+  var max = P.longH - P.viewH;
+  var stops = steps.map(function(s, i){ return steps.length > 1 ? max * i / (steps.length - 1) : 0; });
+  var big = document.querySelector('.phone-col .phone'), minis = steps.map(function(s){ return s.querySelector('.mini'); });
+  [].forEach.call(document.querySelectorAll('.phone'), function(ph){
+    var v = ph.querySelector('.view'); v.style.top = (P.topH / 852 * 100) + '%'; v.style.height = (P.viewH / 852 * 100) + '%';
+  });
+  function clamp(x){ return Math.max(0, Math.min(1, x)); }
+  function ease(t){ if(reduce) return t < .5 ? 0 : 1; return clamp(t); }   // smooth, steady scroll
+  function place(ph, off){ var img = ph.querySelector('.long'), k = ph.querySelector('.screen').clientWidth / P.width; img.style.transform = 'translateY(' + (-off * k).toFixed(1) + 'px)'; }
+  function phoneFrame(){
+    var vh = window.innerHeight, mid = vh / 2;
+    if(big && big.offsetParent){
+      var c = steps.map(function(s){ var r = s.getBoundingClientRect(); return r.top + r.height / 2; }), n = c.length, off, active = 0;
+      if(mid <= c[0]) off = stops[0];
+      else if(mid >= c[n - 1]){ off = stops[n - 1]; active = n - 1; }
+      else for(var i = 0; i < n - 1; i++) if(mid < c[i + 1]){ var t = ease((mid - c[i]) / (c[i + 1] - c[i])); off = stops[i] + (stops[i + 1] - stops[i]) * t; active = t > .5 ? i + 1 : i; break; }
+      place(big, off);
+      big.classList.toggle('mc-on', active === n - 1 && Math.abs(c[n - 1] - mid) < vh * .45);
+    }
+    minis.forEach(function(m, i){ if(!m || !m.offsetParent) return;
+      var r = m.getBoundingClientRect(); if(r.bottom < -50 || r.top > vh + 50) return;
+      var t = ease((vh - r.top) / (vh * .7)), from = stops[Math.max(0, i - 1)];
+      place(m, from + (stops[i] - from) * t);
+      m.classList.toggle('mc-on', i === steps.length - 1 && t > .9);
+    });
+  }
+  var pt = false;
+  window.addEventListener('scroll', function(){ if(!pt){ pt = true; requestAnimationFrame(function(){ pt = false; phoneFrame(); }); } }, { passive:true });
+  window.addEventListener('resize', phoneFrame); window.addEventListener('load', phoneFrame); phoneFrame();
+  var io = new IntersectionObserver(function(es){ es.forEach(function(e){ e.target.classList.toggle('in', e.isIntersecting); }); }, { rootMargin:'-35% 0px -35% 0px' });
   steps.forEach(function(s){ io.observe(s); });
 })();
 </script>

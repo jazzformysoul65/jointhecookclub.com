@@ -20,8 +20,9 @@
 <h1 id="inv-title">Join me on The Cook Club</h1>
 <div class="tag">Your kitchen, your story.</div>
 <p>Log what you cook, rate your attempts, collect recipes and follow other home cooks.</p>
-<p id="inv-hint" class="small" style="display:none;"></p>
 <span class="badge">Coming soon to the App Store</span>
+<p id="inv-hint" class="small" style="display:none;"></p>
+<p id="inv-open" style="display:none;"><a href="#">Already have the app? Open it</a></p>
 </section>
 <script>
 (function(){
@@ -30,8 +31,9 @@
   if(!u) return;
   document.getElementById('inv-title').textContent = '@' + u + ' invited you to The Cook Club';
   var h = document.getElementById('inv-hint');
-  h.textContent = 'Once you join, search for @' + u + ' to follow them.';
+  h.textContent = 'After you get the app, tap this invite link again: it opens The Cook Club and you’ll follow @' + u + ' automatically when you join.';
   h.style.display = 'block';
+  var o = document.getElementById('inv-open'); o.querySelector('a').href = 'thecookclub://invite/' + encodeURIComponent(u); o.style.display = 'block';
   document.title = '@' + u + ' invited you to The Cook Club';
 })();
 </script>

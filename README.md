@@ -12,5 +12,9 @@ https://jointhecookclub.com (the `CNAME` file tells GitHub to use that address).
 | `reset.html` | Opens from the "Forgot password" email so people can choose a new password |
 | `confirmed.html` | Opens from the "Confirm your email" email |
 | `404.html` | "Page not found" |
+| `food/` | Cook Club recipe photos used inside the app (`food/s/` = small copies for cards) |
+| `img/` | The app pictures on the home page (the phone that scrolls through Home) |
+| `.well-known/apple-app-site-association` | Lets invite links open the iPhone app |
+| `.nojekyll` | Tells GitHub to publish the `.well-known` folder |
 
 `supabase.js` is Supabase's official library (MIT license), used only by the password reset page.
